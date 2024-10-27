@@ -72,13 +72,13 @@ async function main() {
 
     console.log('signature:::', signature);
 
-    const ethereumAddress = await fetchDerivedEVMAddress({
+    const derivedEVMAddress = await fetchDerivedEVMAddress({
       signerId: nearAuthentication.accountId,
       path,
       nearNetworkId: nearAuthentication.networkId,
       multichainContractId: contract,
     });
-    console.log('ethereum address:::', ethereumAddress);
+    console.log('Derived Ethereum address:::', derivedEVMAddress);
 
     const sig = ethers.Signature.from({
       r: '0x' + signature.big_r.affine_point.substring(2).toLowerCase(),
@@ -89,8 +89,8 @@ async function main() {
     console.log('recovered address:::', recoveredAddress);
 
     console.log(
-      'Is the recovered address equal to the ethereum address? \n',
-      recoveredAddress.toLowerCase() === ethereumAddress.toLowerCase()
+      'Is the recovered address equal to the derived ethereum address? \n',
+      recoveredAddress.toLowerCase() === derivedEVMAddress.toLowerCase()
     );
   } catch (err) {
     console.log('error:::', err);
