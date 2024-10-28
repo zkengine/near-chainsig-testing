@@ -1,9 +1,15 @@
+import BN from 'bn.js';
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
+import {
+  ChainSignaturesContract,
+  fetchDerivedEVMAddress,
+} from 'multichain-tools';
+import {
+  ChainSignatureContracts,
+  NearAuthentication,
+} from 'multichain-tools/chains/types';
 import { connect, KeyPair, keyStores } from 'near-api-js';
-import { ChainSignatureContracts, NearAuthentication } from './types/near';
-import { fetchDerivedEVMAddress } from './utils/EVM/utils';
-import { ChainSignaturesContract } from './utils/signature';
 
 dotenv.config();
 
@@ -55,8 +61,8 @@ async function main() {
   };
   const nearAuthentication: NearAuthentication = {
     accountId: implicitAddress,
-    deposit: BigInt('200000000000000000000000'),
-    keypair: keyPair!,
+    deposit: new BN('200000000000000000000000'),
+    keypair: keyPair as any,
     networkId: 'testnet',
   };
 
@@ -78,7 +84,7 @@ async function main() {
       nearNetworkId: nearAuthentication.networkId,
       multichainContractId: contract,
     });
-    console.log('Derived Ethereum address:::', derivedEVMAddress);
+    console.log('Derived address:::', derivedEVMAddress);
 
     const sig = ethers.Signature.from({
       r: '0x' + signature.big_r.affine_point.substring(2).toLowerCase(),
@@ -86,7 +92,7 @@ async function main() {
       v: signature.recovery_id,
     });
     const recoveredAddress = ethers.recoverAddress(transactionHash, sig);
-    console.log('recovered address:::', recoveredAddress);
+    console.log('Recovered address:::', recoveredAddress);
 
     console.log(
       'Is the recovered address equal to the derived ethereum address? \n',
